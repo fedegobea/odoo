@@ -39,7 +39,15 @@ const UrlPickerUserValueWidget = InputUserValueWidget.extend({
         this.containerEl.appendChild(linkButton);
         this.el.classList.add('o_we_large_input');
         this.inputEl.classList.add('text-left');
-        wUtils.autocompleteWithPages(this, $(this.inputEl));
+        const options = {
+            position: {
+                collision: 'flip fit',
+            },
+            classes: {
+                "ui-autocomplete": 'o_website_ui_autocomplete'
+            },
+        }
+        wUtils.autocompleteWithPages(this, $(this.inputEl), options);
     },
 
     //--------------------------------------------------------------------------
@@ -2313,8 +2321,15 @@ options.registry.CoverProperties = options.Class.extend({
     updateUI: async function () {
         await this._super(...arguments);
 
+        // TODO: `o_record_has_cover` should be handled using model field, not
+        // resize_class to avoid all of this.
+        let coverClass = this.$el.find('[data-cover-opt-name="size"] we-button.active').data('selectClass') || '';
+        const bg = this.$image.css('background-image');
+        if (bg && bg !== 'none') {
+            coverClass += " o_record_has_cover";
+        }
         // Update saving dataset
-        this.$target[0].dataset.coverClass = this.$el.find('[data-cover-opt-name="size"] we-button.active').data('selectClass') || '';
+        this.$target[0].dataset.coverClass = coverClass;
         this.$target[0].dataset.textAlignClass = this.$el.find('[data-cover-opt-name="text_align"] we-button.active').data('selectClass') || '';
         this.$target[0].dataset.filterValue = this.$filterValueOpts.filter('.active').data('filterValue') || 0.0;
         let colorPickerWidget = null;

@@ -44,7 +44,7 @@ class AccountFiscalPosition(models.Model):
     @api.constrains('zip_from', 'zip_to')
     def _check_zip(self):
         for position in self:
-            if self.zip_from and self.zip_to and position.zip_from > position.zip_to:
+            if position.zip_from and position.zip_to and position.zip_from > position.zip_to:
                 raise ValidationError(_('Invalid "Zip Range", please configure it properly.'))
 
     @api.model     # noqa
@@ -53,7 +53,7 @@ class AccountFiscalPosition(models.Model):
         for tax in taxes:
             tax_count = 0
             for t in self.tax_ids:
-                if t.tax_src_id == tax:
+                if t.tax_src_id.id == (tax._origin or tax).id:
                     tax_count += 1
                     if t.tax_dest_id:
                         result |= t.tax_dest_id
@@ -241,7 +241,7 @@ class ResPartner(models.Model):
                       LEFT JOIN account_account_type act ON (a.user_type_id=act.id)
                       WHERE act.type IN ('receivable','payable')
                       AND account_move_line.partner_id IN %s
-                      AND account_move_line.reconciled IS FALSE
+                      AND account_move_line.reconciled IS NOT TRUE
                       """ + where_clause + """
                       GROUP BY account_move_line.partner_id, act.type
                       """, where_params)

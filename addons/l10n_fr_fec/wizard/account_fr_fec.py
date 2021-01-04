@@ -57,7 +57,7 @@ class AccountFrFec(models.TransientModel):
         WHERE
             am.date < %s
             AND am.company_id = %s
-            AND aat.include_initial_balance = 'f'
+            AND aat.include_initial_balance IS NOT TRUE
             AND (aml.debit != 0 OR aml.credit != 0)
         '''
         # For official report: only use posted entries
@@ -243,7 +243,10 @@ class AccountFrFec(models.TransientModel):
             ELSE ''
             END
             AS CompAuxNum,
-            COALESCE(replace(rp.name, '|', '/'), '') AS CompAuxLib,
+            CASE WHEN aat.type IN ('receivable', 'payable')
+            THEN COALESCE(replace(rp.name, '|', '/'), '')
+            ELSE ''
+            END AS CompAuxLib,
             '-' AS PieceRef,
             %s AS PieceDate,
             '/' AS EcritureLib,
@@ -305,7 +308,10 @@ class AccountFrFec(models.TransientModel):
             ELSE ''
             END
             AS CompAuxNum,
-            COALESCE(replace(replace(rp.name, '|', '/'), '\t', ''), '') AS CompAuxLib,
+            CASE WHEN aat.type IN ('receivable', 'payable')
+            THEN COALESCE(replace(replace(rp.name, '|', '/'), '\t', ''), '')
+            ELSE ''
+            END AS CompAuxLib,
             CASE WHEN am.ref IS null OR am.ref = ''
             THEN '-'
             ELSE replace(replace(am.ref, '|', '/'), '\t', '')

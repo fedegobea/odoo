@@ -5847,6 +5847,8 @@ msgstr "Білий"
 #: model:ir.model.fields,help:website.field_website__domain
 msgid "Will be prefixed by http in canonical URLs if no scheme is specified"
 msgstr ""
+"Буде встановлено префіксом http у канонічних URL-адресах, якщо не вказана "
+"схема"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_quotes_carousel
@@ -5948,6 +5950,12 @@ msgid ""
 msgstr ""
 "Ви приховали цю сторінку з результатів пошуку. Він не буде індексований "
 "пошуковими системами."
+
+#. module: website
+#: code:addons/website/models/website.py:162
+#, python-format
+msgid "You must keep at least one website."
+msgstr "Ви повинні зберегти принаймні один веб-сайт."
 
 #. module: website
 #. openerp-web
